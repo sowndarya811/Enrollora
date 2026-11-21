@@ -20,9 +20,9 @@ export interface StudentFilter {
   maxCgpa?: number | null;
 }
 
+
 export interface UpdateStudentRequest {
   name: string;
-  email: string;
   department: string;
   age: number;
   cgpa: number;

@@ -218,12 +218,11 @@ export class StudentList implements OnInit {
     const formValue = this.studentForm.getRawValue();
 
     const studentData: UpdateStudentRequest = {
-      name: formValue.name!,
-      email: formValue.email!,
-      department: formValue.department!,
-      age: formValue.age!,
-      cgpa: formValue.cgpa!,
-    };
+  name: formValue.name!,
+  department: formValue.department!,
+  age: formValue.age!,
+  cgpa: formValue.cgpa!
+};
 
     this.studentService.updateStudent(this.editingStudentId, studentData).subscribe({
       next: (updatedStudent) => {
