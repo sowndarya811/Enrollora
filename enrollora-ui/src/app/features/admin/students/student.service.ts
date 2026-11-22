@@ -17,6 +17,19 @@ export class StudentService {
 
   private apiUrl = `${environment.apiUrl}/students`;
 
+  getMyProfile(): Observable<StudentResponse> {
+    return this.http.get<StudentResponse>(`${this.apiUrl}/me`);
+  }
+
+  updateMyProfile(
+    studentData: UpdateStudentRequest,
+  ): Observable<StudentResponse> {
+    return this.http.put<StudentResponse>(
+     `${this.apiUrl}/me`,
+      studentData,
+    );
+  }
+
   getStudents(
     pageNumber = 1,
     pageSize = 10,

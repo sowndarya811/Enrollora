@@ -42,6 +42,7 @@ export const routes: Routes = [
             (m) => m.EnrollmentListComponent,
           ),
       },
+     
     ],
   },
   {
@@ -70,6 +71,13 @@ export const routes: Routes = [
             (m) => m.MyEnrollments,
           ),
       },
+      {
+  path: 'profile',
+  loadComponent: () =>
+    import('./features/student/profile/profile').then(
+      (m) => m.StudentProfile
+    ),
+},
       {
         path: '',
         redirectTo: 'courses',

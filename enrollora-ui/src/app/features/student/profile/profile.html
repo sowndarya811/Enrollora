@@ -1,0 +1,156 @@
+
+<div class="profile-page">
+  <div class="page-header">
+    <div>
+      <h2>My Profile</h2>
+      <p>View and manage your personal information</p>
+    </div>
+
+    <button
+      *ngIf="profile && !isEditing"
+      class="edit-btn"
+      (click)="enableEdit()">
+      Edit Profile
+    </button>
+  </div>
+
+
+<div *ngIf="isLoading" class="message">
+  Loading your profile...
+</div>
+
+
+  <div *ngIf="errorMessage" class="alert error">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="successMessage" class="alert success">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="profile && !isLoading" class="profile-card">
+
+    <div class="profile-heading">
+      <div class="avatar">
+        {{ profile.name.charAt(0).toUpperCase() }}
+      </div>
+
+      <div>
+        <h3>{{ profile.name }}</h3>
+        <p>{{ profile.email }}</p>
+      </div>
+    </div>
+
+    <hr />
+
+    <form *ngIf="isEditing" (ngSubmit)="updateProfile()">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <input
+            type="text"
+            name="name"
+            [(ngModel)]="formData.name"
+            required
+            maxlength="120" />
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" [value]="profile.email" disabled />
+        </div>
+
+        <div class="form-group">
+          <label>Department</label>
+          <input
+            type="text"
+            name="department"
+            [(ngModel)]="formData.department"
+            required
+            maxlength="100" />
+        </div>
+
+        <div class="form-group">
+          <label>Age</label>
+          <input
+            type="number"
+            name="age"
+            [(ngModel)]="formData.age"
+            min="17"
+            max="60"
+            required />
+        </div>
+
+        <div class="form-group">
+          <label>CGPA</label>
+          <input
+            type="number"
+            name="cgpa"
+            [(ngModel)]="formData.cgpa"
+            min="0"
+            max="10"
+            step="0.01"
+            required />
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="cancel-btn" (click)="cancelEdit()">
+          Cancel
+        </button>
+
+        <button type="submit" class="save-btn" [disabled]="isSaving">
+          {{ isSaving ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
+
+    <div *ngIf="!isEditing" class="form-grid">
+
+      <div class="detail-item">
+        <label>Student ID</label>
+        <p>{{ profile.studentId }}</p>
+      </div>
+
+      <div class="detail-item">
+        <label>Email Address</label>
+        <p>{{ profile.email }}</p>
+      </div>
+
+      <div class="detail-item">
+        <label>Department</label>
+        <p>{{ profile.department }}</p>
+      </div>
+
+      <div class="detail-item">
+        <label>Age</label>
+        <p>{{ profile.age }}</p>
+      </div>
+
+      <div class="detail-item">
+        <label>CGPA</label>
+        <p>{{ profile.cgpa }}</p>
+      </div>
+
+      <div class="detail-item">
+        <label>Registration Status</label>
+        <p>{{ profile.status }}</p>
+      </div>
+
+      <div class="detail-item">
+        <label>Registered At</label>
+        <p>{{ profile.registeredAt | date:'mediumDate' }}</p>
+      </div>
+
+      <div class="detail-item">
+        <label>Reviewed At</label>
+        <p>
+          {{ profile.reviewedAt ? (profile.reviewedAt | date:'mediumDate') : 'Not reviewed yet' }}
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
