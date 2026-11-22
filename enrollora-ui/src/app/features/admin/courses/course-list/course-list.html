@@ -1,4 +1,61 @@
 <div class="course-page">
+
+  @if (showAddCourseForm()) {
+    <div class="form-overlay">
+      <div class="course-form">
+        <h2>Add New Course</h2>
+
+        <label>Course Name</label>
+        <input
+          type="text"
+          placeholder="Enter course name"
+          [value]="newCourse().courseName"
+          (input)="newCourse.update(c => ({ ...c, courseName: $any($event.target).value }))"
+        />
+
+        <label>Duration</label>
+        <input
+          type="text"
+          placeholder="Example: 6 Months"
+          [value]="newCourse().duration"
+          (input)="newCourse.update(c => ({ ...c, duration: $any($event.target).value }))"
+        />
+
+        <label>Fees</label>
+        <input
+          type="number"
+          min="1"
+          [value]="newCourse().fees"
+          (input)="newCourse.update(c => ({ ...c, fees: +$any($event.target).value }))"
+        />
+
+        <label>Capacity</label>
+        <input
+          type="number"
+          min="1"
+          [value]="newCourse().capacity"
+          (input)="newCourse.update(c => ({ ...c, capacity: +$any($event.target).value }))"
+        />
+
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            [checked]="newCourse().isActive"
+            (change)="newCourse.update(c => ({ ...c, isActive: $any($event.target).checked }))"
+          />
+          Active Course
+        </label>
+
+        <div class="form-actions">
+          <button type="button" (click)="closeAddCourse()">Cancel</button>
+          <button type="button" (click)="saveCourse()" [disabled]="isLoading()">
+            {{ isLoading() ? 'Saving...' : 'Save Course' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
   <!-- Page Header -->
   <div class="page-header">
     <div>
@@ -7,7 +64,9 @@
       <p>Manage courses, fees, capacity and availability.</p>
     </div>
 
-    <button class="btn-add"><span>+</span> Add New Course</button>
+    <button class="btn-add" (click)="openAddCourse()">
+  <span>+</span> Add New Course
+</button>
   </div>
 
   <!-- Summary Cards -->
