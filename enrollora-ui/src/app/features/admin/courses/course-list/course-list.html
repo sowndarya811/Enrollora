@@ -1,55 +1,56 @@
 <div class="course-page">
 
-  @if (showAddCourseForm()) {
+  <!-- Edit Course Modal -->
+  @if (showEditCourseForm()) {
     <div class="form-overlay">
       <div class="course-form">
-        <h2>Add New Course</h2>
+        <h2>Edit Course</h2>
 
         <label>Course Name</label>
         <input
           type="text"
           placeholder="Enter course name"
-          [value]="newCourse().courseName"
-          (input)="newCourse.update(c => ({ ...c, courseName: $any($event.target).value }))"
+          [value]="editCourse().courseName"
+          (input)="editCourse.update(c => ({ ...c, courseName: $any($event.target).value }))"
         />
 
         <label>Duration</label>
         <input
           type="text"
           placeholder="Example: 6 Months"
-          [value]="newCourse().duration"
-          (input)="newCourse.update(c => ({ ...c, duration: $any($event.target).value }))"
+          [value]="editCourse().duration"
+          (input)="editCourse.update(c => ({ ...c, duration: $any($event.target).value }))"
         />
 
         <label>Fees</label>
         <input
           type="number"
           min="1"
-          [value]="newCourse().fees"
-          (input)="newCourse.update(c => ({ ...c, fees: +$any($event.target).value }))"
+          [value]="editCourse().fees"
+          (input)="editCourse.update(c => ({ ...c, fees: +$any($event.target).value }))"
         />
 
         <label>Capacity</label>
         <input
           type="number"
           min="1"
-          [value]="newCourse().capacity"
-          (input)="newCourse.update(c => ({ ...c, capacity: +$any($event.target).value }))"
+          [value]="editCourse().capacity"
+          (input)="editCourse.update(c => ({ ...c, capacity: +$any($event.target).value }))"
         />
 
         <label class="checkbox-label">
           <input
             type="checkbox"
-            [checked]="newCourse().isActive"
-            (change)="newCourse.update(c => ({ ...c, isActive: $any($event.target).checked }))"
+            [checked]="editCourse().isActive"
+            (change)="editCourse.update(c => ({ ...c, isActive: $any($event.target).checked }))"
           />
           Active Course
         </label>
 
         <div class="form-actions">
-          <button type="button" (click)="closeAddCourse()">Cancel</button>
-          <button type="button" (click)="saveCourse()" [disabled]="isLoading()">
-            {{ isLoading() ? 'Saving...' : 'Save Course' }}
+          <button type="button" (click)="closeEditCourse()">Cancel</button>
+          <button type="button" (click)="updateCourse()" [disabled]="isLoading()">
+            {{ isLoading() ? 'Updating...' : 'Update Course' }}
           </button>
         </div>
       </div>
@@ -153,6 +154,7 @@
               <th>ENROLLMENT</th>
               <th>AVAILABLE SEATS</th>
               <th>STATUS</th>
+              <th>ACTIONS</th>
             </tr>
           </thead>
 
@@ -214,6 +216,35 @@
                     <span class="status-dot"></span>
                     {{ course.isActive ? 'Active' : 'Inactive' }}
                   </span>
+                </td>
+                               <td>
+                  <div class="course-actions">
+                    <button
+                      type="button"
+                      class="edit-btn"
+                      (click)="openEditCourse(course)"
+                    >
+                      Edit
+                    </button>
+
+                    @if (course.isActive) {
+                      <button
+                        type="button"
+                        class="deactivate-btn"
+                        (click)="deactivateCourse(course)"
+                      >
+                        Deactivate
+                      </button>
+                    } @else {
+                      <button
+                        type="button"
+                        class="activate-btn"
+                        (click)="activateCourse(course)"
+                      >
+                        Activate
+                      </button>
+                    }
+                  </div>
                 </td>
               </tr>
             }

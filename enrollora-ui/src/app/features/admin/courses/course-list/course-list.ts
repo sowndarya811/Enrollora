@@ -26,11 +26,24 @@ export class CourseListComponent implements OnInit {
     isActive: true,
   });
 
+  // Edit Course Form
+  showEditCourseForm = signal(false);
+  selectedCourseId = signal<number | null>(null);
+
+  editCourse = signal<SaveCourseRequest>({
+    courseName: '',
+    duration: '',
+    fees: 0,
+    capacity: 1,
+    isActive: true,
+  });
+
   // Course Signals
   courses = signal<CourseResponse[]>([]);
 
   isLoading = signal(false);
   errorMessage = signal('');
+  successMessage = signal('');
 
   pageNumber = signal(1);
   pageSize = signal(10);
@@ -45,6 +58,7 @@ export class CourseListComponent implements OnInit {
   // Open Add Course Form
   openAddCourse(): void {
     this.errorMessage.set('');
+    this.successMessage.set('');
     this.showAddCourseForm.set(true);
   }
 
@@ -57,12 +71,7 @@ export class CourseListComponent implements OnInit {
   saveCourse(): void {
     const course = this.newCourse();
 
-    if (
-      !course.courseName.trim() ||
-      !course.duration.trim() ||
-      course.fees <= 0 ||
-      course.capacity <= 0
-    ) {
+    if (!this.isValidCourse(course)) {
       this.errorMessage.set('Please enter valid course details.');
       return;
     }
@@ -81,6 +90,7 @@ export class CourseListComponent implements OnInit {
         });
 
         this.closeAddCourse();
+        this.successMessage.set('Course created successfully.');
         this.pageNumber.set(1);
         this.loadCourses();
       },
@@ -90,6 +100,127 @@ export class CourseListComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
+  }
+
+  // Open Edit Course Form
+  openEditCourse(course: CourseResponse): void {
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    this.selectedCourseId.set(course.courseId);
+
+    this.editCourse.set({
+      courseName: course.courseName,
+      duration: course.duration,
+      fees: course.fees,
+      capacity: course.capacity,
+      isActive: course.isActive,
+    });
+
+    this.showEditCourseForm.set(true);
+  }
+
+  // Close Edit Course Form
+  closeEditCourse(): void {
+    this.showEditCourseForm.set(false);
+    this.selectedCourseId.set(null);
+  }
+
+  // Update Existing Course
+  updateCourse(): void {
+    const id = this.selectedCourseId();
+    const course = this.editCourse();
+
+    if (id === null) {
+      this.errorMessage.set('Invalid course selected.');
+      return;
+    }
+
+    if (!this.isValidCourse(course)) {
+      this.errorMessage.set('Please enter valid course details.');
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.courseService.updateCourse(id, course).subscribe({
+      next: () => {
+        this.closeEditCourse();
+        this.successMessage.set('Course updated successfully.');
+        this.loadCourses();
+      },
+      error: (error) => {
+        console.error('Course update failed:', error);
+        this.errorMessage.set(
+          error.error?.message || 'Unable to update course.'
+        );
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  // Deactivate Course
+  deactivateCourse(course: CourseResponse): void {
+    if (!confirm(`Are you sure you want to deactivate "${course.courseName}"?`)) {
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.courseService.deactivateCourse(course.courseId).subscribe({
+      next: () => {
+        this.successMessage.set('Course deactivated successfully.');
+        this.loadCourses();
+      },
+      error: (error) => {
+        console.error('Course deactivation failed:', error);
+        this.errorMessage.set('Unable to deactivate course.');
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  // Activate Course
+  activateCourse(course: CourseResponse): void {
+    if (!confirm(`Are you sure you want to activate "${course.courseName}"?`)) {
+      return;
+    }
+
+    const request: SaveCourseRequest = {
+      courseName: course.courseName,
+      duration: course.duration,
+      fees: course.fees,
+      capacity: course.capacity,
+      isActive: true,
+    };
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.courseService.updateCourse(course.courseId, request).subscribe({
+      next: () => {
+        this.successMessage.set('Course activated successfully.');
+        this.loadCourses();
+      },
+      error: (error) => {
+        console.error('Course activation failed:', error);
+        this.errorMessage.set('Unable to activate course.');
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  // Validate Course Details
+  private isValidCourse(course: SaveCourseRequest): boolean {
+    return (
+      !!course.courseName.trim() &&
+      !!course.duration.trim() &&
+      Number.isFinite(course.fees) &&
+      course.fees > 0 &&
+      Number.isInteger(course.capacity) &&
+      course.capacity > 0
+    );
   }
 
   // Load Courses

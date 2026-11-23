@@ -580,3 +580,47 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* Course Action Buttons */
+.course-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.course-actions button {
+  padding: 7px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-btn {
+  background: #e8eaff;
+  color: #5145cd;
+}
+
+.edit-btn:hover {
+  background: #d8dcff;
+}
+
+.deactivate-btn {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.deactivate-btn:hover {
+  background: #fecaca;
+}
+
+.activate-btn {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.activate-btn:hover {
+  background: #bbf7d0;
+}
