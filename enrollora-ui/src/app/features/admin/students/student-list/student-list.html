@@ -1,12 +1,25 @@
+
 <div class="students-page">
   <div class="page-heading">
     <div>
       <h2>Students</h2>
       <p>Manage student registrations and approvals.</p>
     </div>
-
     <div class="student-count">Total Students: {{ totalRecords }}</div>
   </div>
+
+  <!-- Action Messages -->
+  @if (actionMessage) {
+    <div class="alert alert-success" role="alert">
+      {{ actionMessage }}
+    </div>
+  }
+
+  @if (actionError) {
+    <div class="alert alert-danger" role="alert">
+      {{ actionError }}
+    </div>
+  }
 
   @if (isLoading) {
     <div class="loading-state">
@@ -112,7 +125,9 @@
         </div>
 
         <div class="filter-footer">
-          <button class="btn btn-apply" (click)="applyFilters()">Apply Filters</button>
+          <button class="btn btn-apply" (click)="applyFilters()">
+            Apply Filters
+          </button>
 
           <button class="btn btn-reset" (click)="clearFilters()">
             <i class="bi bi-arrow-counterclockwise"></i>
@@ -144,7 +159,6 @@
                     <div class="student-avatar">
                       {{ student.name.charAt(0).toUpperCase() }}
                     </div>
-
                     <div>
                       <strong>{{ student.name }}</strong>
                       <small>{{ student.email }}</small>
@@ -183,6 +197,7 @@
                     <button
                       class="btn btn-sm btn-outline-primary"
                       (click)="viewStudent(student.studentId)"
+                      [disabled]="processingStudentId !== null"
                     >
                       View
                     </button>
@@ -190,6 +205,7 @@
                     <button
                       class="btn btn-sm btn-outline-secondary"
                       (click)="editStudent(student.studentId)"
+                      [disabled]="processingStudentId !== null"
                     >
                       Edit
                     </button>
@@ -197,23 +213,38 @@
                     <button
                       class="btn btn-sm btn-outline-danger"
                       (click)="deleteStudent(student.studentId)"
+                      [disabled]="processingStudentId !== null"
                     >
-                      Delete
+                      @if (processingStudentId === student.studentId && processingAction === 'delete') {
+                        Deleting...
+                      } @else {
+                        Delete
+                      }
                     </button>
 
                     @if (student.status === 0) {
                       <button
                         class="btn btn-sm btn-success"
                         (click)="approveStudent(student.studentId)"
+                        [disabled]="processingStudentId !== null"
                       >
-                        Approve
+                        @if (processingStudentId === student.studentId && processingAction === 'approve') {
+                          Approving...
+                        } @else {
+                          Approve
+                        }
                       </button>
 
                       <button
                         class="btn btn-sm btn-outline-danger"
                         (click)="rejectStudent(student.studentId)"
+                        [disabled]="processingStudentId !== null"
                       >
-                        Reject
+                        @if (processingStudentId === student.studentId && processingAction === 'reject') {
+                          Rejecting...
+                        } @else {
+                          Reject
+                        }
                       </button>
                     } @else {
                       <span class="text-muted align-self-center">Reviewed</span>
@@ -239,7 +270,6 @@
 
       <div class="page-size-selector">
         <label for="pageSize">Rows per page:</label>
-
         <select
           #pageselect
           id="pageSize"
@@ -263,7 +293,9 @@
           Previous
         </button>
 
-        <span class="page-indicator"> Page {{ pageNumber }} of {{ totalPages }} </span>
+        <span class="page-indicator">
+          Page {{ pageNumber }} of {{ totalPages }}
+        </span>
 
         <button
           class="btn btn-outline-primary btn-sm"
@@ -278,10 +310,9 @@
 </div>
 
 <!-- Student Details Modal -->
-@if (selectedStudent || isDetailsLoading || detailsError) {
+@if (!isEditModalOpen && (selectedStudent || isDetailsLoading || detailsError)) {
   <div class="student-modal-backdrop">
     <div class="student-modal">
-      <!-- Modal Header -->
       <div class="student-modal-header">
         <div>
           <span class="modal-eyebrow">STUDENT PROFILE</span>
@@ -299,23 +330,16 @@
         </button>
       </div>
 
-      <!-- Loading -->
       @if (isDetailsLoading) {
         <div class="modal-loading">
           <div class="spinner-border text-primary"></div>
           <p>Loading student profile...</p>
         </div>
-      }
-
-      <!-- Error -->
-      @else if (detailsError) {
+      } @else if (detailsError) {
         <div class="alert alert-danger m-4">
           {{ detailsError }}
         </div>
-      }
-
-      <!-- Student Information -->
-      @else if (selectedStudent) {
+      } @else if (selectedStudent) {
         <div class="student-modal-body">
           <!-- Profile -->
           <div class="profile-section">
@@ -326,6 +350,7 @@
             <div class="profile-info">
               <h2>{{ selectedStudent.name }}</h2>
               <p>{{ selectedStudent.email }}</p>
+
               <span
                 class="profile-status"
                 [class.pending]="selectedStudent.status === 0"
@@ -395,7 +420,12 @@
 
         <!-- Footer -->
         <div class="student-modal-footer">
-          <button class="btn-close-modal" (click)="selectedStudent = null">Close Profile</button>
+          <button
+            class="btn-close-modal"
+            (click)="selectedStudent = null"
+          >
+            Close Profile
+          </button>
         </div>
       }
     </div>
@@ -413,46 +443,123 @@
           <p>Update student information</p>
         </div>
 
-        <button type="button" class="modal-close" (click)="closeEditModal()">&times;</button>
+        <button
+          type="button"
+          class="modal-close"
+          (click)="closeEditModal()"
+          [disabled]="isUpdatingStudent"
+        >
+          &times;
+        </button>
       </div>
 
       <div class="student-modal-body">
-        <form [formGroup]="studentForm" (ngSubmit)="updateStudent()">
-          <div class="mb-3">
-            <label class="form-label">Student Name</label>
-            <input type="text" class="form-control" formControlName="name" />
+        @if (isEditLoading) {
+          <div class="loading-state">
+            <div class="spinner-border text-primary"></div>
+            <p>Loading student details...</p>
           </div>
-
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-control" formControlName="email" />
+        } @else if (editError) {
+          <div class="alert alert-danger" role="alert">
+            {{ editError }}
           </div>
+        } @else if (selectedStudent) {
+          <form [formGroup]="studentForm" (ngSubmit)="updateStudent()">
+            <!-- Student Name -->
+            <div class="mb-3">
+              <label class="form-label">Student Name</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="name"
+              />
 
-          <div class="mb-3">
-            <label class="form-label">Department</label>
-            <input type="text" class="form-control" formControlName="department" />
-          </div>
-
-          <div class="row">
-            <div class="col-6 mb-3">
-              <label class="form-label">Age</label>
-              <input type="number" class="form-control" formControlName="age" />
+              @if (studentForm.get('name')?.touched && studentForm.get('name')?.hasError('required')) {
+                <small class="text-danger">Student name is required.</small>
+              }
             </div>
 
-            <div class="col-6 mb-3">
-              <label class="form-label">CGPA</label>
-              <input type="number" class="form-control" step="0.01" formControlName="cgpa" />
+            <!-- Email - Read Only -->
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                [value]="selectedStudent.email"
+                readonly
+              />
+              <small class="text-muted">Email address cannot be changed.</small>
             </div>
-          </div>
 
-          <div class="student-modal-footer">
-            <button type="button" class="btn btn-light" (click)="closeEditModal()">Cancel</button>
+            <!-- Department -->
+            <div class="mb-3">
+              <label class="form-label">Department</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="department"
+              />
 
-            <button type="submit" class="btn-close-modal" [disabled]="studentForm.invalid">
-              Update Student
-            </button>
-          </div>
-        </form>
+              @if (studentForm.get('department')?.touched && studentForm.get('department')?.hasError('required')) {
+                <small class="text-danger">Department is required.</small>
+              }
+            </div>
+
+            <!-- Age and CGPA -->
+            <div class="row">
+              <div class="col-6 mb-3">
+                <label class="form-label">Age</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  formControlName="age"
+                />
+
+                @if (studentForm.get('age')?.touched && studentForm.get('age')?.invalid) {
+                  <small class="text-danger">Age must be between 17 and 60.</small>
+                }
+              </div>
+
+              <div class="col-6 mb-3">
+                <label class="form-label">CGPA</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  step="0.01"
+                  formControlName="cgpa"
+                />
+
+                @if (studentForm.get('cgpa')?.touched && studentForm.get('cgpa')?.invalid) {
+                  <small class="text-danger">CGPA must be between 0 and 10.</small>
+                }
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="student-modal-footer">
+              <button
+                type="button"
+                class="btn btn-light"
+                (click)="closeEditModal()"
+                [disabled]="isUpdatingStudent"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                class="btn-close-modal"
+                [disabled]="studentForm.invalid || isUpdatingStudent"
+              >
+                @if (isUpdatingStudent) {
+                  Updating...
+                } @else {
+                  Update Student
+                }
+              </button>
+            </div>
+          </form>
+        }
       </div>
     </div>
   </div>
