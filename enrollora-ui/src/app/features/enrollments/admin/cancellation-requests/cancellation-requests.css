@@ -1,0 +1,426 @@
+
+.cancellation-page {
+  padding: 24px;
+  color: #29243a;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-header h2 {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.page-header p {
+  color: #858094;
+  margin: 0;
+}
+
+.header-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: #f0eaff;
+  color: #7544d8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid #eeeaf5;
+  margin-bottom: 24px;
+  max-width: 320px;
+}
+
+.summary-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #f0eaff;
+  color: #7544d8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.summary-card span {
+  color: #858094;
+  font-size: 13px;
+}
+
+.summary-card h3 {
+  margin: 4px 0 0;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.filter-container,
+.table-container {
+  background: #fff;
+  border: 1px solid #eeeaf5;
+  border-radius: 14px;
+  margin-bottom: 22px;
+}
+
+.filter-container {
+  padding: 20px;
+}
+
+.filter-header h5 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.filter-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #514b61;
+}
+
+.filter-group .form-control,
+.filter-group .form-select {
+  min-height: 42px;
+  border: 1px solid #e5e0ed;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.filter-group .form-control:focus,
+.filter-group .form-select:focus {
+  border-color: #7544d8;
+  box-shadow: 0 0 0 3px rgba(117, 68, 216, 0.1);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn-primary {
+  background: #7544d8;
+  border-color: #7544d8;
+}
+
+.btn-primary:hover {
+  background: #6334c2;
+  border-color: #6334c2;
+}
+
+.alert {
+  border-radius: 10px;
+  margin-bottom: 18px;
+}
+
+.state-message {
+  text-align: center;
+  padding: 45px 20px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #eeeaf5;
+}
+
+.state-message p {
+  color: #858094;
+  margin-top: 12px;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table {
+  margin: 0;
+  min-width: 900px;
+}
+
+.table thead th {
+  background: #faf9fc;
+  color: #716b80;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 16px;
+  white-space: nowrap;
+  border-bottom: 1px solid #eeeaf5;
+}
+
+.table tbody td {
+  padding: 16px;
+  border-bottom: 1px solid #f0edf5;
+  font-size: 13px;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.student-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 190px;
+}
+
+.student-avatar {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #f0eaff;
+  color: #7544d8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.student-name {
+  font-weight: 600;
+  color: #302a40;
+}
+
+.student-email,
+.course-id {
+  display: block;
+  color: #928ca0;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.course-name {
+  font-weight: 600;
+  color: #393247;
+}
+
+.reason-text {
+  display: block;
+  max-width: 220px;
+  color: #696377;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-badge.pending {
+  background: #fff3d9;
+  color: #a56a00;
+}
+
+.status-badge.approved {
+  background: #e1f7eb;
+  color: #19834a;
+}
+
+.status-badge.rejected {
+  background: #ffe5e5;
+  color: #c43d3d;
+}
+
+.reviewed-label {
+  color: #928ca0;
+  font-size: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 45px !important;
+  color: #928ca0;
+}
+
+.empty-state i {
+  font-size: 30px;
+}
+
+.empty-state p {
+  margin: 10px 0 0;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 16px 20px;
+  background: #fff;
+  border: 1px solid #eeeaf5;
+  border-radius: 12px;
+  color: #858094;
+  font-size: 13px;
+}
+
+.pagination-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pagination-actions button {
+  font-size: 12px;
+}
+
+.review-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(25, 20, 38, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.review-modal {
+  background: #fff;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 16px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+}
+
+.review-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 22px;
+  border-bottom: 1px solid #eeeaf5;
+}
+
+.review-header h3 {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.review-header p {
+  font-size: 12px;
+  color: #928ca0;
+  margin: 5px 0 0;
+}
+
+.modal-close {
+  border: none;
+  background: transparent;
+  color: #777;
+  font-size: 27px;
+  line-height: 1;
+}
+
+.review-body {
+  padding: 22px;
+}
+
+.review-detail {
+  margin-bottom: 18px;
+}
+
+.review-detail label {
+  display: block;
+  color: #928ca0;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.review-detail strong {
+  display: block;
+  color: #302a40;
+  font-size: 14px;
+}
+
+.review-detail small {
+  color: #928ca0;
+}
+
+.review-detail p {
+  color: #514b61;
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.review-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 18px 22px;
+  border-top: 1px solid #eeeaf5;
+}
+
+@media (max-width: 992px) {
+  .filter-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 576px) {
+  .cancellation-page {
+    padding: 14px;
+  }
+
+  .page-header h2 {
+    font-size: 21px;
+  }
+
+  .filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-actions {
+    flex-direction: column;
+  }
+
+  .filter-actions button {
+    width: 100%;
+  }
+
+  .pagination-container {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pagination-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .review-footer {
+    flex-wrap: wrap;
+  }
+}

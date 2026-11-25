@@ -1,3 +1,4 @@
+
 <div class="enrollment-page">
   <div class="page-header">
     <div>
@@ -6,6 +7,12 @@
       <p>View courses you are currently enrolled in.</p>
     </div>
   </div>
+
+  @if (cancellationMessage()) {
+    <div class="success-message">
+      {{ cancellationMessage() }}
+    </div>
+  }
 
   @if (isLoading()) {
     <div class="state-card">
@@ -34,6 +41,7 @@
               <th>Course</th>
               <th>Enrollment Date</th>
               <th>Status</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -50,15 +58,34 @@
                     </div>
                   </div>
                 </td>
+
                 <td>{{ enrollment.enrolledAt | date: 'dd MMM yyyy' }}</td>
+
                 <td>
                   <span
                     class="status-badge"
-                    [class.active]="enrollment.status === 1"
-                    [class.cancelled]="enrollment.status !== 1"
+                    [class.active]="enrollment.status === 0"
+                    [class.cancelled]="enrollment.status === 1"
                   >
                     {{ statusLabel(enrollment.status) }}
                   </span>
+                </td>
+
+                <td>
+                  @if (enrollment.status === 0) {
+                    @if (submittedCancellationIds().includes(enrollment.enrollmentId)) {
+                      <span class="pending-request">Request Submitted</span>
+                    } @else {
+                      <button
+                        class="cancel-request-btn"
+                        (click)="openCancellationModal(enrollment)"
+                      >
+                        Request Cancellation
+                      </button>
+                    }
+                  } @else {
+                    <span class="no-action">—</span>
+                  }
                 </td>
               </tr>
             }
@@ -71,13 +98,76 @@
           Showing {{ enrollments().length }} of {{ totalRecords() }} enrollments
         </span>
         <div>
-          <button (click)="previousPage()" [disabled]="pageNumber() === 1">Previous</button>
+          <button (click)="previousPage()" [disabled]="pageNumber() === 1">
+            Previous
+          </button>
           <span class="current-page">{{ pageNumber() }} / {{ totalPages() }}</span>
           <button
             (click)="nextPage()"
             [disabled]="pageNumber() >= totalPages()"
           >
             Next
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (selectedEnrollment()) {
+    <div class="modal-overlay">
+      <div class="cancellation-modal">
+        <div class="modal-header">
+          <div>
+            <span class="eyebrow">CANCELLATION REQUEST</span>
+            <h2>Cancel Enrollment</h2>
+          </div>
+          <button
+            class="modal-close"
+            (click)="closeCancellationModal()"
+            [disabled]="isSubmittingCancellation()"
+          >
+            ×
+          </button>
+        </div>
+
+        <p class="modal-description">
+          Submit a cancellation request for
+          <strong>{{ selectedEnrollment()?.courseName }}</strong>.
+          The enrollment will remain active until an administrator reviews your request.
+        </p>
+
+        <label for="cancellationReason">Reason for cancellation</label>
+        <textarea
+          id="cancellationReason"
+          rows="5"
+          maxlength="1000"
+          placeholder="Please explain why you want to cancel this enrollment..."
+          [value]="cancellationReason()"
+          (input)="cancellationReason.set($any($event.target).value)"
+        ></textarea>
+
+        <div class="character-count">
+          {{ cancellationReason().length }} / 1000 characters
+        </div>
+
+        @if (cancellationError()) {
+          <p class="form-error">{{ cancellationError() }}</p>
+        }
+
+        <div class="modal-actions">
+          <button
+            class="modal-cancel-btn"
+            (click)="closeCancellationModal()"
+            [disabled]="isSubmittingCancellation()"
+          >
+            Go Back
+          </button>
+          <button
+            class="modal-submit-btn"
+            (click)="submitCancellationRequest()"
+            [disabled]="isSubmittingCancellation()"
+          >
+            {{ isSubmittingCancellation() ? 'Submitting...' : 'Submit Request' }}
           </button>
         </div>
       </div>
