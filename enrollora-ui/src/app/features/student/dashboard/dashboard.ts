@@ -1,3 +1,4 @@
+
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject, signal } from '@angular/core';
@@ -50,105 +51,135 @@ export class Dashboard implements OnInit {
       }
     };
 
-    this.courseService
-      .getCourses(1, 6, { isActive: true })
-      .subscribe({
-        next: (response) => {
-          const eligibleCourses = response.items.filter(
-            (course) => course.isActive && course.availableSeats > 0,
-          );
-          this.availableCourses.set(eligibleCourses);
-          this.availableCourseCount.set(
-            eligibleCourses.filter((course) => course.availableSeats > 0).length,
-          );
-          this.openSeatCount.set(
-            eligibleCourses.reduce((total, course) => total + course.availableSeats, 0),
-          );
-          courseRequestComplete = true;
-          markComplete();
-        },
-        error: (error: HttpErrorResponse) => {
-          this.courseError.set(this.getErrorMessage(error, 'Unable to load available courses.'));
-          courseRequestComplete = true;
-          markComplete();
-        },
-      });
+    // Load available courses
+    this.courseService.getCourses(1, 6, { isActive: true }).subscribe({
+      next: (response) => {
+        const eligibleCourses = response.items.filter(
+          (course) => course.isActive && course.availableSeats > 0,
+        );
 
-    this.enrollmentService
-      .getMyEnrollments(1, 6)
-      .subscribe({
-        next: (response) => {
-          const enrollments = response.items;
-          this.recentEnrollments.set(enrollments);
-          this.totalEnrollmentCount.set(response.totalRecords);
-          let activeStatsComplete = false;
-          let cancelledStatsComplete = false;
+        this.availableCourses.set(eligibleCourses);
 
-          const markStatsComplete = (): void => {
-            if (activeStatsComplete && cancelledStatsComplete) {
-              enrollmentRequestComplete = true;
-              markComplete();
-            }
-          };
+        this.availableCourseCount.set(eligibleCourses.length);
 
-          this.enrollmentService
-            .getMyEnrollments(1, 1, { status: 1 })
-            .subscribe({
-              next: (activeResponse) => {
-                this.activeEnrollmentCount.set(activeResponse.totalRecords);
-                activeStatsComplete = true;
-                markStatsComplete();
-              },
-              error: () => {
-                this.activeEnrollmentCount.set(0);
-                activeStatsComplete = true;
-                markStatsComplete();
-              },
-            });
+        this.openSeatCount.set(
+          eligibleCourses.reduce(
+            (total, course) => total + course.availableSeats,
+            0,
+          ),
+        );
 
-          this.enrollmentService
-            .getMyEnrollments(1, 1, { status: 0 })
-            .subscribe({
-              next: (cancelledResponse) => {
-                this.cancelledEnrollmentCount.set(cancelledResponse.totalRecords);
-                cancelledStatsComplete = true;
-                markStatsComplete();
-              },
-              error: () => {
-                this.cancelledEnrollmentCount.set(0);
-                cancelledStatsComplete = true;
-                markStatsComplete();
-              },
-            });
-        },
-        error: (error: HttpErrorResponse) => {
-          this.enrollmentError.set(
-            this.getErrorMessage(error, 'Unable to load your enrollments.'),
-          );
-          enrollmentRequestComplete = true;
-          markComplete();
-        },
-      });
+        courseRequestComplete = true;
+        markComplete();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.courseError.set(
+          this.getErrorMessage(
+            error,
+            'Unable to load available courses.',
+          ),
+        );
+
+        courseRequestComplete = true;
+        markComplete();
+      },
+    });
+
+    // Load recent enrollments
+    this.enrollmentService.getMyEnrollments(1, 6).subscribe({
+      next: (response) => {
+        this.recentEnrollments.set(response.items);
+        this.totalEnrollmentCount.set(response.totalRecords);
+
+        let activeStatsComplete = false;
+        let cancelledStatsComplete = false;
+
+        const markStatsComplete = (): void => {
+          if (activeStatsComplete && cancelledStatsComplete) {
+            enrollmentRequestComplete = true;
+            markComplete();
+          }
+        };
+
+        // Backend enum: Active = 0
+        this.enrollmentService
+          .getMyEnrollments(1, 1, { status: 0 })
+          .subscribe({
+            next: (activeResponse) => {
+              this.activeEnrollmentCount.set(
+                activeResponse.totalRecords,
+              );
+
+              activeStatsComplete = true;
+              markStatsComplete();
+            },
+            error: () => {
+              this.activeEnrollmentCount.set(0);
+              activeStatsComplete = true;
+              markStatsComplete();
+            },
+          });
+
+        // Backend enum: Cancelled = 1
+        this.enrollmentService
+          .getMyEnrollments(1, 1, { status: 1 })
+          .subscribe({
+            next: (cancelledResponse) => {
+              this.cancelledEnrollmentCount.set(
+                cancelledResponse.totalRecords,
+              );
+
+              cancelledStatsComplete = true;
+              markStatsComplete();
+            },
+            error: () => {
+              this.cancelledEnrollmentCount.set(0);
+              cancelledStatsComplete = true;
+              markStatsComplete();
+            },
+          });
+      },
+      error: (error: HttpErrorResponse) => {
+        this.enrollmentError.set(
+          this.getErrorMessage(
+            error,
+            'Unable to load your enrollments.',
+          ),
+        );
+
+        enrollmentRequestComplete = true;
+        markComplete();
+      },
+    });
   }
 
   statusLabel(status: number): string {
-    return status === 1 ? 'Active' : 'Cancelled';
+    return status === 0 ? 'Active' : 'Cancelled';
   }
 
-  private getErrorMessage(error: HttpErrorResponse, fallback: string): string {
+  private getErrorMessage(
+    error: HttpErrorResponse,
+    fallback: string,
+  ): string {
     const body = error.error;
+
     if (typeof body === 'string' && body.trim()) {
       return body;
     }
+
     if (body?.detail) {
       return body.detail;
     }
+
     if (body?.message) {
       return body.message;
     }
+
     if (body?.title) {
       return body.title;
     }
+
     return fallback;
   }
 }
+

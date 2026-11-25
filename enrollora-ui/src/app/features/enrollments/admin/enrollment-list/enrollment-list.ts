@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { EnrollmentService } from '../../enrollment.service';
 import { CourseService } from '../../../admin/courses/course.service';
 import { CourseResponse } from '../../../admin/courses/course.models';
+
 import {
   EnrollmentResponse,
   EnrollmentFilter,
@@ -18,11 +19,10 @@ import {
   styleUrl: './enrollment-list.css',
 })
 export class EnrollmentListComponent implements OnInit {
-  private enrollmentService = inject(EnrollmentService);
-  private courseService = inject(CourseService);
+  private readonly enrollmentService = inject(EnrollmentService);
+  private readonly courseService = inject(CourseService);
 
-courses = signal<CourseResponse[]>([]);
-
+  courses = signal<CourseResponse[]>([]);
   enrollments = signal<EnrollmentResponse[]>([]);
 
   isLoading = signal(false);
@@ -44,20 +44,23 @@ courses = signal<CourseResponse[]>([]);
   private appliedFilters: EnrollmentFilter = {};
 
   ngOnInit(): void {
-  this.loadCourses();
-  this.loadEnrollments();
-}
-loadCourses(): void {
-  this.courseService.getCourses(1, 100).subscribe({
-    next: (response) => {
-      this.courses.set(response.items);
-    },
-    error: (error) => {
-      console.error('Error loading courses:', error);
-    },
-  });
-}
+    this.loadCourses();
+    this.loadEnrollments();
+  }
 
+  // Load courses for filter dropdown
+  loadCourses(): void {
+    this.courseService.getCourses(1, 100).subscribe({
+      next: (response) => {
+        this.courses.set(response.items ?? []);
+      },
+      error: (error) => {
+        console.error('Error loading courses:', error);
+      },
+    });
+  }
+
+  // Load all enrollments (Admin)
   loadEnrollments(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
@@ -70,19 +73,28 @@ loadCourses(): void {
       )
       .subscribe({
         next: (response) => {
-          this.enrollments.set(response.items);
-          this.totalRecords.set(response.totalRecords);
-          this.totalPages.set(response.totalPages);
+          const items = response.items ?? [];
+
+          this.enrollments.set(items);
+          this.totalRecords.set(response.totalRecords ?? items.length);
+          this.totalPages.set(response.totalPages ?? 1);
+
           this.isLoading.set(false);
         },
         error: (error) => {
           console.error('Error loading enrollments:', error);
+
+          this.enrollments.set([]);
+          this.totalRecords.set(0);
+          this.totalPages.set(0);
+
           this.errorMessage.set('Unable to load enrollments.');
           this.isLoading.set(false);
         },
       });
   }
 
+  // Apply filters
   applyFilters(): void {
     const fromDate = this.fromDateFilter();
     const toDate = this.toDateFilter();
@@ -110,6 +122,7 @@ loadCourses(): void {
     this.loadEnrollments();
   }
 
+  // Clear filters
   clearFilters(): void {
     this.searchTerm.set('');
     this.courseIdFilter.set(null);
@@ -118,11 +131,12 @@ loadCourses(): void {
     this.toDateFilter.set('');
 
     this.appliedFilters = {};
-    this.pageNumber.set(1);
 
+    this.pageNumber.set(1);
     this.loadEnrollments();
   }
 
+  // Next page
   nextPage(): void {
     if (this.pageNumber() < this.totalPages()) {
       this.pageNumber.update((page) => page + 1);
@@ -130,6 +144,7 @@ loadCourses(): void {
     }
   }
 
+  // Previous page
   previousPage(): void {
     if (this.pageNumber() > 1) {
       this.pageNumber.update((page) => page - 1);
