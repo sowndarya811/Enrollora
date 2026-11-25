@@ -138,7 +138,7 @@
     <!-- Academic Performance -->
     <h5 class="section-title">Academic Performance</h5>
 
-    <div class="row g-3">
+    <div class="row g-3 mb-4">
       <div class="col-md-6">
         <div class="cgpa-card">
           <div>
@@ -149,6 +149,52 @@
           <div class="cgpa-icon">★</div>
         </div>
       </div>
+    </div>
+
+    <!-- Student Status Report -->
+    <h5 class="section-title">Student Status Report</h5>
+
+    <div class="report-card">
+
+      <div class="report-row">
+        <div class="report-label">
+          <span>Approved Students</span>
+          <strong>{{ summary.approvedStudents }}</strong>
+        </div>
+        <div class="report-track">
+          <div
+            class="report-bar approved"
+            [style.width.%]="summary.totalStudents ? summary.approvedStudents / summary.totalStudents * 100 : 0">
+          </div>
+        </div>
+      </div>
+
+      <div class="report-row">
+        <div class="report-label">
+          <span>Pending Approvals</span>
+          <strong>{{ summary.pendingApprovals }}</strong>
+        </div>
+        <div class="report-track">
+          <div
+            class="report-bar pending"
+            [style.width.%]="summary.totalStudents ? summary.pendingApprovals / summary.totalStudents * 100 : 0">
+          </div>
+        </div>
+      </div>
+
+      <div class="report-row">
+        <div class="report-label">
+          <span>Rejected Students</span>
+          <strong>{{ summary.rejectedStudents }}</strong>
+        </div>
+        <div class="report-track">
+          <div
+            class="report-bar rejected"
+            [style.width.%]="summary.totalStudents ? summary.rejectedStudents / summary.totalStudents * 100 : 0">
+          </div>
+        </div>
+      </div>
+
     </div>
 
   }

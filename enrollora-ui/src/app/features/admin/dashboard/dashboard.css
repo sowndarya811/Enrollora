@@ -186,3 +186,57 @@
     white-space: nowrap;
   }
 }
+
+.report-card {
+  background: #ffffff;
+  border: 1px solid #e8edf5;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 700px;
+}
+
+.report-row {
+  margin-bottom: 22px;
+}
+
+.report-row:last-child {
+  margin-bottom: 0;
+}
+
+.report-label {
+  display: flex;
+  justify-content: space-between;
+  color: #475569;
+  font-size: 13px;
+  margin-bottom: 9px;
+}
+
+.report-label strong {
+  color: #172554;
+}
+
+.report-track {
+  height: 10px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.report-bar {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.report-bar.approved {
+  background: #10b981;
+}
+
+.report-bar.pending {
+  background: #f59e0b;
+}
+
+.report-bar.rejected {
+  background: #ef4444;
+}
+

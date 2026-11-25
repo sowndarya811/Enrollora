@@ -1,3 +1,4 @@
+
 <div class="dashboard-page">
   <div class="dashboard-heading">
     <div>
@@ -22,6 +23,7 @@
       </div>
     }
 
+    <!-- Dashboard Summary -->
     <div class="summary-grid">
       <article class="summary-card purple">
         <div class="summary-icon">▤</div>
@@ -58,8 +60,19 @@
           <small>Across available courses</small>
         </div>
       </article>
+
+      <!-- Cancelled Enrollments -->
+      <article class="summary-card orange">
+        <div class="summary-icon">↘</div>
+        <div>
+          <span>Cancelled Enrollments</span>
+          <h2>{{ cancelledEnrollmentCount() }}</h2>
+          <small>Your cancelled registrations</small>
+        </div>
+      </article>
     </div>
 
+    <!-- Dashboard Details -->
     <div class="dashboard-grid">
       <section class="panel recent-panel">
         <div class="panel-header">
@@ -106,6 +119,7 @@
         }
       </section>
 
+      <!-- Available Courses -->
       <section class="panel courses-panel">
         <div class="panel-header">
           <div>
@@ -144,6 +158,7 @@
       </section>
     </div>
 
+    <!-- Quick Actions -->
     <section class="quick-actions">
       <a routerLink="/student/courses" class="action-card purple-action">
         <div class="action-icon">▤</div>
